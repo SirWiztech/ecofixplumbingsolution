@@ -29,6 +29,7 @@
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>document.documentElement.classList.add('js-boot');</script>
     
     <!-- Google Fonts: Plus Jakarta Sans (headings) + Inter (body) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -113,6 +114,11 @@
     </script>
 
     <style>
+        /* Anti-overflow: never allow horizontal scroll (fixed off-canvas elements, etc.) */
+        html, body { overflow-x: hidden; overflow-x: clip; }
+        /* Anti-FOUC: hold paint until Tailwind's CDN JIT has compiled (removed at end of body) */
+        html.js-boot body { visibility: hidden; }
+
         /* Talina — custom heading font */
         @font-face {
             font-family: 'Talina';
@@ -126,13 +132,17 @@
         ::-webkit-scrollbar-track { background: #f1f1f1; }
         ::-webkit-scrollbar-thumb { background: #4FA3E3; border-radius: 4px; }
 
-        /* Fade-in animation classes */
+        /* Fade-in animation classes (smaller slide on mobile so nothing overflows/clips) */
         .fade-up { opacity: 0; transform: translateY(40px); transition: opacity 0.7s ease-out, transform 0.7s ease-out; }
         .fade-up.visible { opacity: 1; transform: translateY(0); }
-        .fade-left { opacity: 0; transform: translateX(-40px); transition: opacity 0.7s ease-out, transform 0.7s ease-out; }
+        .fade-left { opacity: 0; transform: translateX(-16px); transition: opacity 0.7s ease-out, transform 0.7s ease-out; }
         .fade-left.visible { opacity: 1; transform: translateX(0); }
-        .fade-right { opacity: 0; transform: translateX(40px); transition: opacity 0.7s ease-out, transform 0.7s ease-out; }
+        .fade-right { opacity: 0; transform: translateX(16px); transition: opacity 0.7s ease-out, transform 0.7s ease-out; }
         .fade-right.visible { opacity: 1; transform: translateX(0); }
+        @media (min-width: 640px) {
+            .fade-left { transform: translateX(-40px); }
+            .fade-right { transform: translateX(40px); }
+        }
         .scale-in { opacity: 0; transform: scale(0.92); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
         .scale-in.visible { opacity: 1; transform: scale(1); }
 
@@ -171,8 +181,8 @@
         .service-card:hover { transform: translateY(-8px); box-shadow: 0 16px 48px rgba(27,58,92,0.14); }
 
         /* Mobile nav drawer */
-        .mobile-nav { transform: translateX(100%); transition: transform 0.35s cubic-bezier(0.4,0,0.2,1); }
-        .mobile-nav.open { transform: translateX(0); }
+        .mobile-nav { transform: translateX(100%); visibility: hidden; transition: transform 0.35s cubic-bezier(0.4,0,0.2,1), visibility 0s 0.35s; }
+        .mobile-nav.open { transform: translateX(0); visibility: visible; transition: transform 0.35s cubic-bezier(0.4,0,0.2,1); }
 
         /* Floating label form */
         .floating-input:focus ~ label,
@@ -207,7 +217,7 @@
             transition: opacity 0.6s ease, visibility 0.6s ease;
         }
         #preloader.hidden-screen { opacity: 0; visibility: hidden; pointer-events: none; }
-        .preloader-logo { animation: logoPulse 1.6s ease-in-out infinite; }
+        .preloader-logo { width: 6rem; height: 6rem; animation: logoPulse 1.6s ease-in-out infinite; }
         @keyframes logoPulse {
             0%, 100% { transform: scale(1); opacity: 1; }
             50%      { transform: scale(1.08); opacity: 0.85; }
@@ -292,7 +302,7 @@
 <!-- ════════════════════════════════════════════════════ -->
 <header id="mainHeader" class="fixed top-0 left-0 w-full z-50 transition-all duration-300 bg-white/95 backdrop-blur-sm">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between h-20">
+        <div class="flex items-center justify-between flex-nowrap whitespace-nowrap h-20">
             
             <!-- Logo -->
             <a href="#home" class="flex items-center gap-3 group">
@@ -304,18 +314,18 @@
             </a>
 
             <!-- Desktop Nav Links -->
-            <nav class="hidden xl:flex flex-1 items-center justify-center gap-8 2xl:gap-12 ml-10">
-                <a href="#home" class="font-heading text-sm font-semibold text-eco-navy hover:text-eco-blue transition-colors relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-0.5 after:bg-eco-blue after:transition-all hover:after:w-full"><i class="fa-solid fa-house mr-1.5 text-xs"></i>Home</a>
-                <a href="#services" class="font-heading text-sm font-semibold text-eco-navy hover:text-eco-blue transition-colors relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-0.5 after:bg-eco-blue after:transition-all hover:after:w-full"><i class="fa-solid fa-list-check mr-1.5 text-xs"></i>Services</a>
-                <a href="#about" class="font-heading text-sm font-semibold text-eco-navy hover:text-eco-blue transition-colors relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-0.5 after:bg-eco-blue after:transition-all hover:after:w-full"><i class="fa-solid fa-circle-info mr-1.5 text-xs"></i>About</a>
-                <a href="#portfolio" class="font-heading text-sm font-semibold text-eco-navy hover:text-eco-blue transition-colors relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-0.5 after:bg-eco-blue after:transition-all hover:after:w-full"><i class="fa-solid fa-images mr-1.5 text-xs"></i>Projects</a>
-                <a href="#testimonials" class="font-heading text-sm font-semibold text-eco-navy hover:text-eco-blue transition-colors relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-0.5 after:bg-eco-blue after:transition-all hover:after:w-full"><i class="fa-solid fa-star mr-1.5 text-xs"></i>Reviews</a>
-                <a href="#careers" class="font-heading text-sm font-semibold text-eco-navy hover:text-eco-blue transition-colors relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-0.5 after:bg-eco-blue after:transition-all hover:after:w-full"><i class="fa-solid fa-briefcase mr-1.5 text-xs"></i>Careers</a>
-                <a href="#contact" class="font-heading text-sm font-semibold text-eco-navy hover:text-eco-blue transition-colors relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-0.5 after:bg-eco-blue after:transition-all hover:after:w-full"><i class="fa-solid fa-envelope mr-1.5 text-xs"></i>Contact</a>
+            <nav class="hidden xl:flex flex-1 items-center justify-evenly flex-nowrap whitespace-nowrap gap-5 2xl:gap-6 px-6 2xl:px-10">
+                <a href="#home" class="inline-flex items-center whitespace-nowrap font-heading text-sm font-semibold text-eco-navy hover:text-eco-blue transition-colors relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-0.5 after:bg-eco-blue after:transition-all hover:after:w-full"><i class="fa-solid fa-house mr-1.5 text-xs"></i>Home</a>
+                <a href="#services" class="inline-flex items-center whitespace-nowrap font-heading text-sm font-semibold text-eco-navy hover:text-eco-blue transition-colors relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-0.5 after:bg-eco-blue after:transition-all hover:after:w-full"><i class="fa-solid fa-list-check mr-1.5 text-xs"></i>Services</a>
+                <a href="#about" class="inline-flex items-center whitespace-nowrap font-heading text-sm font-semibold text-eco-navy hover:text-eco-blue transition-colors relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-0.5 after:bg-eco-blue after:transition-all hover:after:w-full"><i class="fa-solid fa-circle-info mr-1.5 text-xs"></i>About</a>
+                <a href="#portfolio" class="inline-flex items-center whitespace-nowrap font-heading text-sm font-semibold text-eco-navy hover:text-eco-blue transition-colors relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-0.5 after:bg-eco-blue after:transition-all hover:after:w-full"><i class="fa-solid fa-images mr-1.5 text-xs"></i>Projects</a>
+                <a href="#testimonials" class="inline-flex items-center whitespace-nowrap font-heading text-sm font-semibold text-eco-navy hover:text-eco-blue transition-colors relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-0.5 after:bg-eco-blue after:transition-all hover:after:w-full"><i class="fa-solid fa-star mr-1.5 text-xs"></i>Reviews</a>
+                <a href="#careers" class="inline-flex items-center whitespace-nowrap font-heading text-sm font-semibold text-eco-navy hover:text-eco-blue transition-colors relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-0.5 after:bg-eco-blue after:transition-all hover:after:w-full"><i class="fa-solid fa-briefcase mr-1.5 text-xs"></i>Careers</a>
+                <a href="#contact" class="inline-flex items-center whitespace-nowrap font-heading text-sm font-semibold text-eco-navy hover:text-eco-blue transition-colors relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-0.5 after:bg-eco-blue after:transition-all hover:after:w-full"><i class="fa-solid fa-envelope mr-1.5 text-xs"></i>Contact</a>
             </nav>
 
             <!-- CTA + Phone -->
-            <div class="hidden xl:flex items-center gap-5">
+            <div class="hidden xl:flex items-center flex-nowrap whitespace-nowrap gap-5">
                 <a href="tel:+447912868491" class="flex items-center gap-2 text-sm font-semibold text-eco-navy hover:text-eco-blue transition-colors">
                     <i class="fa-solid fa-phone text-eco-green"></i>
                     <span>+44 7912 868491</span>
@@ -391,7 +401,7 @@
             </div>
 
             <!-- Headline -->
-            <h1 class="fade-up font-heading font-extrabold text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-white leading-[1.08] mb-6">
+            <h1 class="fade-up font-heading font-extrabold text-[length:clamp(1.35rem,7.4vw,1.875rem)] sm:text-5xl md:text-6xl lg:text-7xl text-white leading-[1.12] mb-6 whitespace-nowrap">
                 Premium Plumbing<br>
                 <span class="bg-gradient-to-r from-eco-blue to-eco-green bg-clip-text text-transparent">Solutions</span> in<br>
                 North West England
@@ -928,10 +938,10 @@
 
             <!-- Image Side -->
             <div class="fade-left relative">
-                <div class="relative rounded-3xl overflow-hidden shadow-2xl border border-gray-100">
+                <div class="relative rounded-3xl overflow-hidden shadow-2xl border border-gray-100 w-full max-w-md mx-auto">
                     <img src="images/hiring.png" 
                          alt="We are hiring — Ecofix Plumbing Solutions is looking for experienced plumbers, service technicians and apprentices" 
-                         class="w-full h-[560px] object-cover">
+                         class="w-full h-auto object-contain">
                 </div>
                 <!-- Decorative accent blocks -->
                 <div class="absolute -top-4 -right-4 w-24 h-24 bg-eco-blue/10 rounded-2xl -z-10"></div>
@@ -1022,34 +1032,34 @@
         <div class="grid lg:grid-cols-2 gap-12">
             
             <!-- Contact Form -->
-            <div class="fade-left bg-white rounded-3xl p-8 md:p-10 shadow-soft border border-gray-100">
+            <div class="fade-left min-w-0 bg-white rounded-3xl p-5 sm:p-8 md:p-10 shadow-soft border border-gray-100">
                 <form id="contactForm" class="space-y-6" onsubmit="handleSubmit(event)">
                     
                     <!-- Name -->
                     <div class="relative">
                         <input type="text" id="name" name="name" placeholder=" " required
-                               class="floating-input peer w-full px-4 py-4 border border-gray-200 rounded-xl text-gray-800 font-medium focus:outline-none focus:border-eco-green focus:ring-2 focus:ring-eco-green/20 transition-all bg-transparent">
+                               class="floating-input peer w-full min-w-0 max-w-full px-4 py-4 border border-gray-200 rounded-xl text-gray-800 font-medium focus:outline-none focus:border-eco-green focus:ring-2 focus:ring-eco-green/20 transition-all bg-transparent">
                         <label for="name" class="floating-label font-medium">Full Name</label>
                     </div>
 
                     <!-- Email -->
                     <div class="relative">
                         <input type="email" id="email" name="email" placeholder=" " required
-                               class="floating-input peer w-full px-4 py-4 border border-gray-200 rounded-xl text-gray-800 font-medium focus:outline-none focus:border-eco-blue focus:ring-2 focus:ring-eco-blue/20 transition-all bg-transparent">
+                               class="floating-input peer w-full min-w-0 max-w-full px-4 py-4 border border-gray-200 rounded-xl text-gray-800 font-medium focus:outline-none focus:border-eco-blue focus:ring-2 focus:ring-eco-blue/20 transition-all bg-transparent">
                         <label for="email" class="floating-label font-medium">Email Address</label>
                     </div>
 
                     <!-- Phone -->
                     <div class="relative">
                         <input type="tel" id="phone" name="phone" placeholder=" "
-                               class="floating-input peer w-full px-4 py-4 border border-gray-200 rounded-xl text-gray-800 font-medium focus:outline-none focus:border-eco-blue focus:ring-2 focus:ring-eco-blue/20 transition-all bg-transparent">
+                               class="floating-input peer w-full min-w-0 max-w-full px-4 py-4 border border-gray-200 rounded-xl text-gray-800 font-medium focus:outline-none focus:border-eco-blue focus:ring-2 focus:ring-eco-blue/20 transition-all bg-transparent">
                         <label for="phone" class="floating-label font-medium">Phone Number</label>
                     </div>
 
                     <!-- Service Dropdown -->
                     <div class="relative">
                         <select id="service" name="service" required
-                                class="w-full px-4 py-4 border border-gray-200 rounded-xl text-gray-800 font-medium focus:outline-none focus:border-eco-blue focus:ring-2 focus:ring-eco-blue/20 transition-all bg-white appearance-none cursor-pointer">
+                                class="w-full min-w-0 max-w-full px-4 py-4 border border-gray-200 rounded-xl text-gray-800 font-medium focus:outline-none focus:border-eco-blue focus:ring-2 focus:ring-eco-blue/20 transition-all bg-white appearance-none cursor-pointer">
                             <option value="" disabled selected>Select a Service</option>
                             <option value="luxury-bathroom">Luxury Bathroom Design & Install</option>
                             <option value="general-repair">General Plumbing Repair</option>
@@ -1065,7 +1075,7 @@
                     <!-- Message -->
                     <div class="relative">
                         <textarea id="message" name="message" rows="4" placeholder=" " required
-                                  class="floating-input peer w-full px-4 py-4 border border-gray-200 rounded-xl text-gray-800 font-medium focus:outline-none focus:border-eco-green focus:ring-2 focus:ring-eco-green/20 transition-all bg-transparent resize-none"></textarea>
+                                  class="floating-input peer w-full min-w-0 max-w-full px-4 py-4 border border-gray-200 rounded-xl text-gray-800 font-medium focus:outline-none focus:border-eco-green focus:ring-2 focus:ring-eco-green/20 transition-all bg-transparent resize-none"></textarea>
                         <label for="message" class="floating-label font-medium">Tell Us About Your Project</label>
                     </div>
 
@@ -1089,15 +1099,15 @@
             </div>
 
             <!-- Contact Info + Map -->
-            <div class="fade-right space-y-8">
+            <div class="fade-right min-w-0 w-full space-y-8">
                 
                 <!-- Info Cards -->
-                <div class="grid sm:grid-cols-2 gap-5">
+                <div class="grid sm:grid-cols-2 gap-5 min-w-0">
                     <a href="tel:+447912868491" class="flex items-center gap-4 p-5 bg-white rounded-2xl border border-gray-100 shadow-soft hover:shadow-lg hover:border-eco-blue/30 transition-all group">
                         <div class="w-12 h-12 rounded-xl bg-eco-green/10 flex items-center justify-center flex-shrink-0 group-hover:bg-eco-green transition-colors">
                             <i class="fa-solid fa-phone text-eco-green group-hover:text-white transition-colors"></i>
                         </div>
-                        <div>
+                        <div class="min-w-0">
                             <p class="text-xs text-gray-400 font-medium uppercase tracking-wider">Call Us</p>
                             <p class="font-heading font-bold text-eco-navy">+44 7912 868491</p>
                         </div>
@@ -1106,16 +1116,16 @@
                         <div class="w-12 h-12 rounded-xl bg-eco-blue/10 flex items-center justify-center flex-shrink-0 group-hover:bg-eco-blue transition-colors">
                             <i class="fa-solid fa-envelope text-eco-blue group-hover:text-white transition-colors"></i>
                         </div>
-                        <div>
+                        <div class="min-w-0">
                             <p class="text-xs text-gray-400 font-medium uppercase tracking-wider">Email Us</p>
-                            <p class="font-heading font-bold text-eco-navy text-sm">info@ecofixplumbingsolutions.co.uk</p>
+                            <p class="font-heading font-bold text-eco-navy text-[0.8rem] sm:text-sm break-all">info@ecofixplumbingsolutions.co.uk</p>
                         </div>
                     </a>
                     <div class="flex items-center gap-4 p-5 bg-white rounded-2xl border border-gray-100 shadow-soft">
                         <div class="w-12 h-12 rounded-xl bg-eco-green/10 flex items-center justify-center flex-shrink-0">
                             <i class="fa-solid fa-location-dot text-eco-green"></i>
                         </div>
-                        <div>
+                        <div class="min-w-0">
                             <p class="text-xs text-gray-400 font-medium uppercase tracking-wider">Location</p>
                             <p class="font-heading font-bold text-eco-navy">North West England</p>
                         </div>
@@ -1150,11 +1160,12 @@
                     </div>
                 </div>
 
-                <!-- Map Placeholder -->
-                <div class="rounded-2xl overflow-hidden shadow-soft border border-gray-100 h-56">
+                <!-- Map -->
+                <div class="min-w-0 w-full rounded-2xl overflow-hidden shadow-soft border border-gray-100 h-72 sm:h-56">
                     <iframe 
                         src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d380000!2d-2.5!3d53.5!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x487bb3e0e0e0e0e1%3A0x0!2sNorth%20West%20England!5e0!3m2!1sen!2suk!4v1700000000000"
-                        width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+                        class="block w-full h-full min-w-0"
+                        style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
                         title="Ecofix Plumbing Solutions - North West England location">
                     </iframe>
                 </div>
@@ -1229,9 +1240,9 @@
                         <i class="fa-solid fa-phone text-eco-blue text-sm mt-1"></i>
                         <a href="tel:+447912868491" class="text-white/50 hover:text-eco-blue transition-colors text-sm">+44 7912 868491</a>
                     </li>
-                    <li class="flex items-start gap-3">
-                        <i class="fa-solid fa-envelope text-eco-blue text-sm mt-1"></i>
-                        <a href="mailto:info@ecofixplumbingsolutions.co.uk" class="text-white/50 hover:text-eco-blue transition-colors text-sm">info@ecofixplumbingsolutions.co.uk</a>
+                    <li class="flex items-start gap-3 min-w-0">
+                        <i class="fa-solid fa-envelope text-eco-blue text-sm mt-1 flex-shrink-0"></i>
+                        <a href="mailto:info@ecofixplumbingsolutions.co.uk" class="text-white/50 hover:text-eco-blue transition-colors text-sm break-all">info@ecofixplumbingsolutions.co.uk</a>
                     </li>
                     <li class="flex items-start gap-3">
                         <i class="fa-solid fa-location-dot text-eco-blue text-sm mt-1"></i>
@@ -1323,6 +1334,9 @@
 <script>
 (function() {
     'use strict';
+
+    // Reveal the page now that Tailwind's JIT has processed the DOM
+    document.documentElement.classList.remove('js-boot');
 
     // ── Preloader ───────────────────────────────────────
     const preloader = document.getElementById('preloader');
